@@ -120,7 +120,7 @@ app.post("/contact", async (req, res) => {
 
 app.get("/", (req, res) => {
  
-  res.sendFile(path.join(__dirname, "/public/Index.html"));
+  res.sendFile(path.join(__dirname, "Tapin/public/Index.html"));
  
 });
 
