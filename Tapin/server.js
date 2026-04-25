@@ -119,7 +119,7 @@ app.post("/contact", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
+  res.sendFile(path.join(__dirname, "public/Index.html"));
 });
 
 app.listen(3000, () => {
