@@ -1,4 +1,6 @@
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 
+/* WAITLIST FORM */
 const waitlistForm = document.getElementById("waitlistForm");
 
 if (waitlistForm) {
@@ -7,7 +9,6 @@ if (waitlistForm) {
 
     const emailInput = document.getElementById("email");
     const msg = document.getElementById("message");
-
     const email = emailInput.value.trim();
 
     msg.innerHTML = "";
@@ -20,8 +21,7 @@ if (waitlistForm) {
       return;
     }
 
-    const emailRegex =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
       msg.innerHTML = "Please enter a valid email";
@@ -29,16 +29,21 @@ if (waitlistForm) {
       return;
     }
 
+    const formData = new FormData(waitlistForm);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+
     try {
       msg.innerHTML = "Submitting...";
       msg.style.color = "#0057C8";
 
-      const res = await fetch("/join-waitlist", {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify({ email })
+        body: json
       });
 
       const data = await res.json();
@@ -46,12 +51,11 @@ if (waitlistForm) {
       if (data.success) {
         msg.innerHTML = "You're on the Tapin waitlist 🚀";
         msg.style.color = "green";
-        emailInput.value = "";
+        waitlistForm.reset();
       } else {
-        msg.innerHTML = "Something went wrong";
+        msg.innerHTML = data.message || "Something went wrong";
         msg.style.color = "red";
       }
-
     } catch (error) {
       console.error(error);
       msg.innerHTML = "Server error. Try again.";
@@ -59,7 +63,6 @@ if (waitlistForm) {
     }
   });
 }
-
 
 /* CONTACT FORM */
 const contactForm = document.getElementById("contactForm");
@@ -70,7 +73,6 @@ if (contactForm) {
 
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("contactEmail").value.trim();
-    const phone = document.getElementById("phone").value.trim();
     const messageText = document.getElementById("messageText").value.trim();
 
     const msg = document.getElementById("contactMessage");
@@ -85,8 +87,7 @@ if (contactForm) {
       return;
     }
 
-    const emailRegex =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
       msg.innerHTML = "Please enter valid email";
@@ -94,34 +95,33 @@ if (contactForm) {
       return;
     }
 
+    const formData = new FormData(contactForm);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+
     try {
       msg.innerHTML = "Sending...";
       msg.style.color = "#0057C8";
 
-      const res = await fetch("/contact", {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify({
-          name,
-          email,
-          phone,
-          message: messageText
-        })
+        body: json
       });
 
       const data = await res.json();
 
       if (data.success) {
-        msg.innerHTML = "Message sent successfully,We will contact you soon.";
+        msg.innerHTML = "Message sent successfully, We will contact you soon.";
         msg.style.color = "green";
         contactForm.reset();
       } else {
-        msg.innerHTML = "Failed to send message";
+        msg.innerHTML = data.message || "Failed to send message";
         msg.style.color = "red";
       }
-
     } catch (error) {
       console.error(error);
       msg.innerHTML = "Server error. Try again.";
