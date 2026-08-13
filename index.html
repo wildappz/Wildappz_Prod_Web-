@@ -160,7 +160,7 @@ Problem-solving brands">
               <div class="u-align-left u-container-align-left u-container-style u-layout-cell u-right-cell u-size-30 u-layout-cell-2">
                 <div class="u-container-layout u-valign-middle u-container-layout-2">
                   <div class="u-form u-form-1">
-                    <form action="https://api.web3forms.com/submit" method="POST" id="wildappzContactForm" class="u-clearfix u-form-spacing-10 u-form-vertical" style="padding: 10px;" source="email" name="form-4">
+                    <form id="wildappzContactForm" class="u-clearfix u-form-spacing-10 u-form-vertical" style="padding: 10px;" name="form-4">
                       <input type="hidden" name="access_key" value="81e4ceb2-d602-4ad5-ac44-5e31861d04fa">
                       <input type="hidden" name="subject" value="New Wildappz Contact Message">
                       <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
@@ -177,7 +177,7 @@ Problem-solving brands">
                         <textarea placeholder="Enter your message" rows="4" cols="50" id="message-049c" name="message" class="u-input u-input-rectangle" required=""></textarea>
                       </div>
                       <div class="u-form-group u-form-submit">
-                       <button type="submit" class="u-button-style u-palette-3-base u-btn-1" style="border:none;cursor:pointer;">Submit</button>
+                        <button type="button" id="wildappzSubmitBtn" class="u-button-style u-palette-3-base u-btn-1" style="border:none;cursor:pointer;">Submit</button>
                       </div>
                       <div class="u-form-send-message u-form-send-success" id="wildappzFormSuccess" style="display:none;">Thank you! Your message has been sent, we will contact you soon. </div>
                       <div class="u-form-send-error u-form-send-message" id="wildappzFormError" style="display:none;"> Unable to send your message. Please fix errors then try again. </div>
@@ -251,14 +251,19 @@ Problem-solving brands">
 <script>
 (function () {
   var form = document.getElementById("wildappzContactForm");
-  if (!form) return;
+  var btn = document.getElementById("wildappzSubmitBtn");
+  if (!form || !btn) return;
 
   var successMsg = document.getElementById("wildappzFormSuccess");
   var errorMsg = document.getElementById("wildappzFormError");
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
+  btn.addEventListener("click", function () {
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
 
+    btn.disabled = true;
     successMsg.style.display = "none";
     errorMsg.style.display = "none";
 
@@ -276,6 +281,7 @@ Problem-solving brands">
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
+        btn.disabled = false;
         if (data.success) {
           successMsg.style.display = "block";
           form.reset();
@@ -285,6 +291,7 @@ Problem-solving brands">
         }
       })
       .catch(function () {
+        btn.disabled = false;
         errorMsg.textContent = "Server error. Please try again.";
         errorMsg.style.display = "block";
       });
